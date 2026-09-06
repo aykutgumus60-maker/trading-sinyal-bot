@@ -50,8 +50,8 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 STATE_FILE = os.path.join(os.path.dirname(__file__), "state.json")
 
-BINANCE_KLINES_URL = "https://api.binance.com/api/v3/klines"
 
+BINANCE_KLINES_URL = "https://data-api.binance.vision/api/v3/klines"
 
 # ------------------------------------------------------------------
 # VERI CEKME
