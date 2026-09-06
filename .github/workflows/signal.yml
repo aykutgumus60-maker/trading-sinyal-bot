@@ -1,0 +1,36 @@
+name: BTC Multi Indicator AL Sinyali
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # her 5 dakikada bir (UTC)
+  workflow_dispatch: {}      # manuel calistirmak icin
+
+permissions:
+  contents: write
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Bagimliliklari kur
+        run: pip install -r requirements.txt
+
+      - name: Botu calistir
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python bot.py
+
+      - name: state.json degisikligini commitle
+        run: |
+          git config user.name "signal-bot"
+          git config user.email "signal-bot@users.noreply.github.com"
+          git add state.json
+          git diff --cached --quiet || git commit -m "state guncelle [skip ci]"
+          git push
