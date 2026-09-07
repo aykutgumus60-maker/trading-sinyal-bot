@@ -1,0 +1,31 @@
+name: BTC Backtest (180 gun)
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Kac gunluk geriye donuk test yapilsin"
+        required: false
+        default: "180"
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Bagimliliklari kur
+        run: pip install -r requirements.txt
+
+      - name: Backtest calistir
+        run: python backtest.py ${{ github.event.inputs.days }}
+
+      - name: Sonuc dosyasini yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: backtest-sonuclari
+          path: signals_180gun.csv
