@@ -39,7 +39,8 @@ KLINE_LIMIT = 300          # Connors RSI'nin percent-rank(100) penceresi icin ye
 # Grafikte yukaridan asagiya sirayla verdigin esik degerleri:
 RSI_THRESHOLD = float(os.environ.get("RSI_THRESHOLD", 25))
 CRSI_THRESHOLD = float(os.environ.get("CRSI_THRESHOLD", 14))
-UO_THRESHOLD = float(os.environ.get("UO_THRESHOLD", 36))
+UO_THRESHOLD = float(os.environ.get("UO_THRESHOLD", 32
+                                   ))
 RVI_THRESHOLD = float(os.environ.get("RVI_THRESHOLD", 20))
 ROC_THRESHOLD = float(os.environ.get("ROC_THRESHOLD", -55))
 MAJORITY_THRESHOLD = float(os.environ.get("MAJORITY_THRESHOLD", 17))
