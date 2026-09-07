@@ -45,7 +45,14 @@ RVI_THRESHOLD = float(os.environ.get("RVI_THRESHOLD", 20))
 ROC_THRESHOLD = float(os.environ.get("ROC_THRESHOLD", -55))
 MAJORITY_THRESHOLD = float(os.environ.get("MAJORITY_THRESHOLD", 17))
 MFI_THRESHOLD = float(os.environ.get("MFI_THRESHOLD", 18))
-
+# SAT (asiri alinmis / overbought) icin aday esikler - henuz botun kendisinde
+# kullanilmiyor, sadece backtest_sat.py ile kalibrasyon amacli
+RSI_SAT_THRESHOLD = float(os.environ.get("RSI_SAT_THRESHOLD", 75))
+CRSI_SAT_THRESHOLD = float(os.environ.get("CRSI_SAT_THRESHOLD", 86))
+UO_SAT_THRESHOLD = float(os.environ.get("UO_SAT_THRESHOLD", 68))
+RVI_SAT_THRESHOLD = float(os.environ.get("RVI_SAT_THRESHOLD", 80))
+MAJORITY_SAT_THRESHOLD = float(os.environ.get("MAJORITY_SAT_THRESHOLD", 50))
+MFI_SAT_THRESHOLD = float(os.environ.get("MFI_SAT_THRESHOLD", 82))
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
