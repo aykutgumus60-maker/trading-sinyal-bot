@@ -50,8 +50,8 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 STATE_FILE = os.path.join(os.path.dirname(__file__), "state.json")
 
-
 BINANCE_KLINES_URL = "https://data-api.binance.vision/api/v3/klines"
+
 
 # ------------------------------------------------------------------
 # VERI CEKME
@@ -215,7 +215,6 @@ def main():
         "CRSI(3,2,100)": (last["crsi"], CRSI_THRESHOLD),
         "UO(7,14,28)": (last["uo"], UO_THRESHOLD),
         "RVI(10)": (last["rvi10"], RVI_THRESHOLD),
-        "ROC(9)": (last["roc9"], ROC_THRESHOLD),
         "Majority Rule(14)": (last["majority14"], MAJORITY_THRESHOLD),
         "MFI(14)": (last["mfi14"], MFI_THRESHOLD),
     }
