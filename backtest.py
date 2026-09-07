@@ -105,7 +105,6 @@ def main():
         (ind["crsi"] <= CRSI_THRESHOLD) &
         (ind["uo"] <= UO_THRESHOLD) &
         (ind["rvi10"] <= RVI_THRESHOLD) &
-        (ind["roc9"] <= ROC_THRESHOLD) &
         (ind["majority14"] <= MAJORITY_THRESHOLD) &
         (ind["mfi14"] <= MFI_THRESHOLD)
     )
