@@ -1,0 +1,31 @@
+name: BTC Sinyal Basari Analizi
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Kac gunluk sinyaller analiz edilsin"
+        required: false
+        default: "180"
+
+jobs:
+  analiz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Bagimliliklari kur
+        run: pip install -r requirements.txt
+
+      - name: Analizi calistir
+        run: python success_analysis.py ${{ github.event.inputs.days }}
+
+      - name: Sonuc dosyasini yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: sinyal-basari-analizi
+          path: signal_basari_analizi.csv
