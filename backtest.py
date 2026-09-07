@@ -108,16 +108,6 @@ def main():
         "Majority Rule(14)": ind["majority14"] <= MAJORITY_THRESHOLD,
         "MFI(14)": ind["mfi14"] <= MFI_THRESHOLD,
     }
-  # SAT (asiri alinmis / overbought) icin aday esikler - henuz botun kendisinde
-# kullanilmiyor, sadece backtest_sat.py ile kalibrasyon amacli
-RSI_SAT_THRESHOLD = float(os.environ.get("RSI_SAT_THRESHOLD", 75))
-CRSI_SAT_THRESHOLD = float(os.environ.get("CRSI_SAT_THRESHOLD", 86))
-UO_SAT_THRESHOLD = float(os.environ.get("UO_SAT_THRESHOLD", 68))
-RVI_SAT_THRESHOLD = float(os.environ.get("RVI_SAT_THRESHOLD", 80))
-MAJORITY_SAT_THRESHOLD = float(os.environ.get("MAJORITY_SAT_THRESHOLD", 50))
-MFI_SAT_THRESHOLD = float(os.environ.get("MFI_SAT_THRESHOLD", 82))
-
-    cond = (
         indiv["RSI(14)"] &
         indiv["CRSI(3,2,100)"] &
         indiv["UO(7,14,28)"] &
