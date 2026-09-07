@@ -87,6 +87,10 @@ def main():
     n_total_bilgi_yeterli_3g = 0
     n_basarili_3g = 0
 
+    max_pct_1g_list = []
+    max_pct_3g_list = []
+    min_pct_3g_list = []
+
     for i in signal_idx:
         sig_time = df["dt"].iloc[i]
         sig_price = df["close"].iloc[i]
@@ -95,12 +99,16 @@ def main():
         end_1d = i + WINDOW_1D
         has_full_1d = end_1d < len(df)
         basari_1g = None
+        max_pct_1g = None
         if has_full_1d:
             window = ind["rsi14"].iloc[i + 1: end_1d + 1]
             basari_1g = bool((window >= RSI_TARGET).any())
             n_total_bilgi_yeterli_1g += 1
             if basari_1g:
                 n_basarili_1g += 1
+            price_window_1d = df["close"].iloc[i + 1: end_1d + 1]
+            max_pct_1g = (price_window_1d.max() / sig_price - 1) * 100
+            max_pct_1g_list.append(max_pct_1g)
 
         # 3 GUN kontrolu
         end_3d = i + WINDOW_3D
@@ -109,6 +117,8 @@ def main():
         ilk_70_zamani = None
         ilk_70_fiyat = None
         yuzde_degisim = None
+        max_pct_3g = None
+        min_pct_3g = None
         if has_full_3d:
             window3 = ind["rsi14"].iloc[i + 1: end_3d + 1]
             hit = window3[window3 >= RSI_TARGET]
@@ -121,6 +131,12 @@ def main():
                 ilk_70_fiyat = df["close"].iloc[first_hit_idx]
                 yuzde_degisim = (ilk_70_fiyat / sig_price - 1) * 100
 
+            price_window_3d = df["close"].iloc[i + 1: end_3d + 1]
+            max_pct_3g = (price_window_3d.max() / sig_price - 1) * 100
+            min_pct_3g = (price_window_3d.min() / sig_price - 1) * 100
+            max_pct_3g_list.append(max_pct_3g)
+            min_pct_3g_list.append(min_pct_3g)
+
         rows_out.append({
             "tarih_saat": sig_time,
             "fiyat": round(sig_price, 2),
@@ -131,10 +147,13 @@ def main():
             "MajorityRule": round(ind["majority14"].iloc[i], 2),
             "MFI": round(ind["mfi14"].iloc[i], 2),
             "1gun_icinde_RSI70": basari_1g if has_full_1d else "veri_yetersiz",
+            "1gun_max_yuzde_kazanc": round(max_pct_1g, 2) if max_pct_1g is not None else None,
             "3gun_icinde_RSI70": basari_3g if has_full_3d else "veri_yetersiz",
             "70e_ulasma_zamani": ilk_70_zamani,
             "70deki_fiyat": round(ilk_70_fiyat, 2) if ilk_70_fiyat else None,
-            "yuzde_degisim": round(yuzde_degisim, 2) if yuzde_degisim is not None else None,
+            "yuzde_degisim_70e_kadar": round(yuzde_degisim, 2) if yuzde_degisim is not None else None,
+            "3gun_max_yuzde_kazanc": round(max_pct_3g, 2) if max_pct_3g is not None else None,
+            "3gun_max_yuzde_kayip": round(min_pct_3g, 2) if min_pct_3g is not None else None,
         })
 
     out_df = pd.DataFrame(rows_out)
@@ -158,8 +177,19 @@ def main():
         print(f"(Son {degerlendirilemeyen} sinyal icin henuz 3 gunluk gelecek verisi olusmadi, sayima dahil edilmedi.)")
 
     if n_basarili_3g > 0:
-        basarili_yuzdeler = out_df.loc[out_df["yuzde_degisim"].notna(), "yuzde_degisim"]
+        basarili_yuzdeler = out_df.loc[out_df["yuzde_degisim_70e_kadar"].notna(), "yuzde_degisim_70e_kadar"]
         print(f"\nBasarili sinyallerde ortalama fiyat artisi (sinyalden 70'e kadar): %{basarili_yuzdeler.mean():.2f}")
+
+    print("\n=== FIYAT DEGISIM DAGILIMI (TUM SINYALLER) ===")
+    if max_pct_1g_list:
+        s = pd.Series(max_pct_1g_list)
+        print(f"1 GUN icindeki EN YUKSEK kazanc %  -> min: {s.min():.2f}  medyan: {s.median():.2f}  ortalama: {s.mean():.2f}  maks: {s.max():.2f}")
+    if max_pct_3g_list:
+        s = pd.Series(max_pct_3g_list)
+        print(f"3 GUN icindeki EN YUKSEK kazanc %  -> min: {s.min():.2f}  medyan: {s.median():.2f}  ortalama: {s.mean():.2f}  maks: {s.max():.2f}")
+    if min_pct_3g_list:
+        s = pd.Series(min_pct_3g_list)
+        print(f"3 GUN icindeki EN BUYUK kayip   %  -> min: {s.min():.2f}  medyan: {s.median():.2f}  ortalama: {s.mean():.2f}  maks: {s.max():.2f}")
 
     print("\nDetayli tablo 'signal_basari_analizi.csv' dosyasina yazildi.")
 
