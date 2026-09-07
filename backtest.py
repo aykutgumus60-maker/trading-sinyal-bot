@@ -108,6 +108,8 @@ def main():
         "Majority Rule(14)": ind["majority14"] <= MAJORITY_THRESHOLD,
         "MFI(14)": ind["mfi14"] <= MFI_THRESHOLD,
     }
+
+    cond = (
         indiv["RSI(14)"] &
         indiv["CRSI(3,2,100)"] &
         indiv["UO(7,14,28)"] &
