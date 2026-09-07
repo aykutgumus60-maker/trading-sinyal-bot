@@ -100,18 +100,37 @@ def main():
 
     ind = compute_all(df)
 
+    indiv = {
+        "RSI(14)": ind["rsi14"] <= RSI_THRESHOLD,
+        "CRSI(3,2,100)": ind["crsi"] <= CRSI_THRESHOLD,
+        "UO(7,14,28)": ind["uo"] <= UO_THRESHOLD,
+        "RVI(10)": ind["rvi10"] <= RVI_THRESHOLD,
+        "Majority Rule(14)": ind["majority14"] <= MAJORITY_THRESHOLD,
+        "MFI(14)": ind["mfi14"] <= MFI_THRESHOLD,
+    }
+
     cond = (
-        (ind["rsi14"] <= RSI_THRESHOLD) &
-        (ind["crsi"] <= CRSI_THRESHOLD) &
-        (ind["uo"] <= UO_THRESHOLD) &
-        (ind["rvi10"] <= RVI_THRESHOLD) &
-        (ind["majority14"] <= MAJORITY_THRESHOLD) &
-        (ind["mfi14"] <= MFI_THRESHOLD)
+        indiv["RSI(14)"] &
+        indiv["CRSI(3,2,100)"] &
+        indiv["UO(7,14,28)"] &
+        indiv["RVI(10)"] &
+        indiv["Majority Rule(14)"] &
+        indiv["MFI(14)"]
     )
 
     # Sadece asil istenen DAYS penceresini degerlendir (isinma donemini at)
     cutoff = pd.Timestamp(now_ms - DAYS * 24 * 60 * 60 * 1000, unit="ms")
     mask_window = df["dt"] >= cutoff
+
+    print("\n=== HER INDIKATORUN TEK BASINA ESIK ALTINA DUSME SIKLIGI ===")
+    print("(yuksek yuzde = cok 'gevsek'/genis esik, sik tetikliyor - darbogaz DEGIL)")
+    print("(dusuk yuzde = cok 'siki'/dar esik, nadir tetikliyor - asil darbogaz BU)")
+    for name, series in indiv.items():
+        pct = series[mask_window].mean() * 100
+        print(f"  {name:20s} %{pct:5.1f} mumda esik altinda")
+
+    avg_count = sum(s[mask_window].astype(int) for s in indiv.values()).mean()
+    print(f"\n  Ortalama ayni anda esik altina dusen indikator sayisi: {avg_count:.2f} / 6")
 
     # bot.py'deki gibi: sinyal sadece kosul FALSE -> TRUE'ya donunce sayilir
     rising_edge = cond & (~cond.shift(1).fillna(False))
